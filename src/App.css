@@ -1,0 +1,88 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wordle-header {
+  color: blue;
+}
+
+.wordle-grid{
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.wordle-grid-row {
+  display: flex;
+  flex-direction: row;
+  
+}
+
+.wordle-grid-char {
+  flex-direction: column;
+  justify-content: center;
+  border: solid 1px white;
+  padding: 10px;
+  margin: 10px;
+  width: 30px;
+  height: 35px;
+}
+
+.wordle-grid-char-true {
+  background-color: green;
+}
+
+.wordle-grid-char-false {
+  /* background-color: green; */
+}
+
+.keyboard-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.keyboard-grid-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.keyboard-grid-char {
+  border:solid 1px white ;
+  padding: 10px;
+  
+}
