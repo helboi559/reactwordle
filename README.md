@@ -37,7 +37,7 @@ Sample overlay Siblings (actual word - input word)
 //input word 1-6 (chars 1-5) - children
 ```
 
--## Requirements (Week 1 - Front End)
+-## Requirements (Week 1 - Front End)------------------------------
 
 - {Instructor} Introduce students to Wordle, css in React, Flex-box, key
 - Create a new github repo called wordleclone, clone the repo to your computer and add the link to populi
@@ -104,3 +104,57 @@ Sample overlay Siblings (actual word - input word)
     - <WordleGridRow> and <KeyboardRow> should be display: flex, flex-direction: row
 - If you did everything right, you should see a front-end very similar to Wordle except the first guess is the letters R, E, A, C, and T (see attached screenshot). Do not worry about the functionality yet, that will be the next assignment.
 - Stretch goal: modify <WordleGridLetter> to take in a prop that sets the color of the wordleLetter box to either grey, green or yellow.
+
+----------- FUNCTIONALITY ------------------------------
+
+- Add the provided wordleWords.js file to the project on the same hierarchical level as App.js. Import the two variables answerList and wordList into App.js.
+  - import {answerList, wordList} from "./wordleWords.js"
+  - answerList is an array containing all possible wordle answer words.
+  - wordList is an array containing all possible valid word guesses a user can make.
+  - Yes, these two arrays are hardcoded in the real game. Yes, the real Wordle merely increments through answerList in order to provide a new hidden answer per day (so it's very easy to cheat if you look into the wordle front end javascript bundle).
+- Add the following state variables to <App>
+  - wordleGuessIndex
+    - This state variable will be a number defaulted to 0. This number represents the index of the wordleGuess array the user is currently modifying.
+  - wordleLetterIndex
+    - This state variable will be a number defaulted to 0. This number represents the index of the wordleLetter in the wordleGuess array the user is currently modifying.
+  - wordleAnswer
+    - This state variable will be a string that should be defaulted to pickWordleAnswer().
+    - const [wordleAnswer, setWordleAnswer] = useState(pickWordleAnswer())
+  - gameState
+    - This state variable will be a string defaulted to "playing". This variable represents the current state of our game as the user is playing. This variable can have 3 possible values: "playing", "won", "lost".
+- Implement the following as functions inside the <App> component with the described functionality.
+- handleKeyPress(key){}
+  - This function should be invoked when the user either types a letter or clicks one of the buttons on the keyboard besides "enter" and "backspace".
+  - When invoked, handleKeyPress should update wordleGuessList with the inputted letter at the indexes of wordleGuessIndex and wordleLetterIndex.
+  - Additionally, this function should increment wordleLetterIndex by 1 unless wordleLetterIndex has a value greater than or equal to 4.
+  - I.E. If the user enters the letter "a" and they are guessing the second letter of the third word in the guess list, wordleLetterIndex should be 2 and wordleGuessIndex should be 3. That empty string in wordleGuessList should be set to the letter "a". Addtionally, wordleLetterIndex should be incremented to 3. If the user is attempting to enter a letter and the wordleLetterIndex is already at 4, I.E. we have reached the end of our word, this function should do nothing else.
+- handleBackspace(){}
+  - This function should be invoked when the user types the backspace key or clicks the "backspace" button on the wordle keyboard.
+  - When invoked, handleBackspace should:
+    - Decrement wordleLetterIndex by 1 unless wordleLetterIndex has a value equal to 0.
+    - Set the letter at wordleLetterIndex (after decrementing by 1) in the current wordleGuessIndex array to be an empty string.
+  - I.E. We want to do the opposite functionality of handleKeyPress. Go back a single letter in the current guess and erase it.
+- pickWordleAnswer(){}
+  - This function should return a random string from answerList.
+  - Optionally, you can pass a single parameter into pickWordleAnswer(). The parameter should be a number and will override the random string functionality by returning a word from answerList at the inputted index (useful for testing and debugging).
+- checkAndUpdateGameState(){}
+  - This function will be invoked by handleEnterKey().
+  - When invoked, it should check the following conditions and update the gameState state variable accordingly.
+    - Does the word in the current wordleGuessIndex array match the wordleAnswer?
+      - If yes, set gameState to "won"
+    - Has the user reached their maximum number of guesses (I.E. wordleGuessIndex is equal to 6)?
+      - If yes, set gameState to "lost"
+    - If the above two conditions are false, keep gameState as "playing"
+- checkIsValidGuess(guess){}
+  - This function will be invoked by handleEnterKey().
+  - When invoked, it should check that the inputted guess word is a valid guess by checking if the word exists in the wordList array.
+    - If the guess is valid, return true
+    - If the guess is invalid, return false
+  - Optionally, this function could also perform the check to see if the word is 5 letters long and return false if it isn't, BEFORE checking if the word is in the wordList array.
+- handleEnterKey(){}
+  - This function should be invoked when the user types the enter key or clicks the "enter" button on the wordle keyboard.
+  - This function should do the following:
+    - Use checkIsValidGuess(guess) to validate of the user's current guess is valid or not. If it is valid, continue on. If it isn't, display an error message to the user and do not continue on.
+    - Use checkAndUpdateGameState() to check if the user has won, lost, or is still playing and update the gameState accordingly.
+    - If the user is still playing (I.E. gameState is still "playing"), increment wordleGuessIndex by 1 and set wordleLetterIndex to 0 (I.E. move onto the first letter of the next guess)
+- Stretch Goal (the tough part): Once a user has invoked handleEnterKey() and the gameState is still set to "playing", it means that the last guess the user made is either partially or totally incorrect. Implement functionality to set the letters of the guessed word in the wordleGrid to either grey, green or yellow. Grey for a letter that is not in wordleAnswer. Yellow for a letter that is in wordleAnswer but is not in the correct position (index). Green for a letter that is in the wordleAnswer and is in the correct position (index). There are many ways to implement this functionality. Feel free to change any state variables or functionality in the application to implement this feature.
