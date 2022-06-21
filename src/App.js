@@ -3,10 +3,7 @@
 import {useState,useEffect} from 'react';
 import './App.css';
 import {answerList, wordList} from "./wordleWords.js"
-//random list
-// let wordList = ['hello', 'there', 'donor', 'array']
 
-// console.log(randomWord)
 //make empty list
 const defaultList = [
   ['','','','',''],
@@ -20,12 +17,14 @@ const defaultList = [
 const keyboardList = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
   ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
-  ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"]
+  ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"]
   ]
 
 const gameStateList = ['playing','won','lost']
 
-// select random correct word
+const letters = [
+    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
+  ]
 
 function App() {
   //data for guesslist 
@@ -38,7 +37,7 @@ function App() {
   const [wordleGuessIndex,setWordleGuessIndex] = useState(0)
   const [wordleLetterIndex,setWordleLetterIndex] = useState(0)
   const [wordleAnswer,setWordleAnswer] = useState(pickWordleAnswer())
-  const [gameState,setGameState] = useState([...gameStateList])
+  const [gameState,setGameState] = useState([...gameStateList][0])
   // console.log(wordleAnswer)
   
   //sameple key
@@ -47,18 +46,37 @@ function App() {
   //     console.log('hi')
   //     setShowTitle(!showTitle)
   //   }
-  
-  const handleKeyPress = (key) => {
-    //update wordleguesslist && letteridx && guessidx  -- create a deep copy  when it comes to nested arr/obj
-    console.log('key start',key)
-    // const newGuessList = JSON.parse(JSON.stringify(wordleGuessList))
-    if(key === "backspace") {
-      handleBackSpace();
-    } else if (key === 'enter') {
-      handleEnterKey();
-    } else {
-      handleKeyEvent(key);
+  useEffect(() => {
+    window.addEventListener('keyup',handleKeyPress);
+    return () => {
+      window.removeEventListener('keyup', handleKeyPress);
     }
+  },[wordleLetterIndex,wordleGuessIndex]);
+
+  const handleKeyPress = ({key}) => {
+    //update wordleguesslist && letteridx && guessidx  -- create a deep copy  when it comes to nested arr/obj
+    // console.log('key start',key)
+    // const newGuessList = JSON.parse(JSON.stringify(wordleGuessList))
+    if (key === "Enter") {
+      // console.log('if enter', key)
+      handleEnterKey();
+    }
+    if (key === "Backspace") {
+      // console.log("Backspace key handler")
+      // console.log('if backspace', key)
+      handleBackSpace()
+    }
+    if (letters.includes(key.toUpperCase())) {
+      handleKeyEvent(key.toUpperCase())
+      // console.log('handle other keys', key)
+    }
+    // if(key === "backspace") {
+    //   handleBackSpace();
+    // } else if (key === 'enter') {
+    //   handleEnterKey();
+    // } else {
+    //   handleKeyEvent(key);
+    // }
     
   }
  
@@ -101,17 +119,21 @@ function App() {
     if (checkIsValidGuess(guess)) {
       console.log('check was valid')
       //set gamestate to win
+      setGameState([...gameStateList][1])
     } else {
       //if no match move on to the next match
       console.log('wordle index',wordleGuessIndex)
       if(wordleGuessIndex !== 5) {
         console.log('keep playing')
+        //change color of letters in guess answer
+        changeColor(guess)
         //move to the next game
         setWordleGuessIndex(wordleGuessIndex + 1)
         setWordleLetterIndex(0)
       } else {
         console.log('lost')
-        //game over
+        //game over set gamestate to lost
+        setGameState([...gameStateList][2])
       }
       
     } 
@@ -119,6 +141,11 @@ function App() {
   const checkIsValidGuess = (guess) => {
     console.log(guess === wordleAnswer)
     return guess === wordleAnswer
+  }
+  const changeColor = (guess) => {
+    //change classname to true/false  if guess idx and answer index are the same
+    let answerIdx = wordleAnswer.split('')
+    console.log(answerIdx)
   }
   return (
     <div className="App" >
@@ -157,7 +184,7 @@ const WordleGridRow = (props) => {
      <div className='wordle-grid-row'>
         {props.wordleGuess.map((wordleLetter,index) => {
             return (
-                <WordleGridLetter key={`wordleLetter-${index}`} wordleLetter={wordleLetter} isCorrect={wordleLetter === 'E'} />
+                <WordleGridLetter key={`wordleLetter-${index}`} wordleLetter={wordleLetter} isCorrect={wordleLetter === 'e'} />
             )
         })}
       </div>
@@ -199,9 +226,9 @@ const KeyboardRow = (props) => {
 }
 
 const KeyboardLeter = (props) => {
-  
+  const clickKey = {key:props.keyboardLetter}
   return(
-    <div className='keyboard-grid-char' onClick={()=> props.handleKeyPress(props.keyboardLetter) } >
+    <div className='keyboard-grid-char' onClick={()=> props.handleKeyPress(clickKey) } >
       {props.keyboardLetter}
     </div>
   )
