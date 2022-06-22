@@ -20,7 +20,13 @@ const keyboardList = [
   ["Enter", "z", "x", "c", "v", "b", "n", "m", "Backspace"]
   ]
 
-const gameStateList = ['playing','won','lost']
+// const gameStateList = ['playing','won','lost']
+const GAME_STATE_ENUM = {
+  playing:"PLAYING",
+  won:'WON',
+  lost:'LOST'
+}
+
 
 const letters = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
@@ -37,7 +43,7 @@ function App() {
   const [wordleGuessIndex,setWordleGuessIndex] = useState(0)
   const [wordleLetterIndex,setWordleLetterIndex] = useState(0)
   const [wordleAnswer,setWordleAnswer] = useState(pickWordleAnswer())
-  const [gameState,setGameState] = useState([...gameStateList][0])
+  const [gameState,setGameState] = useState(GAME_STATE_ENUM.playing)
   // console.log('answer outside func',wordleAnswer)
   
  
@@ -115,16 +121,18 @@ function App() {
     
     if (guess === wordleAnswer) {
       //if won
-      setGameState([...gameStateList][1])
+      setGameState(GAME_STATE_ENUM.won)
       return;
     }
     if(wordleGuessIndex === 5) {
       //if lost(at the end of the guesses)
-      setGameState([...gameStateList][2])
+      // setGameState([...gameStateList][2])
+      setGameState(GAME_STATE_ENUM.lost)
       //move to the next game
       return;
     } 
-    setGameState([...gameStateList][0])
+    // setGameState([...gameStateList][0])
+    setGameState(GAME_STATE_ENUM.playing)
     return 
       
     
