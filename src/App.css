@@ -67,9 +67,9 @@
   background-color: green;
 }
 
-.wordle-grid-char-false {
-  /* background-color: green; */
-}
+/* .wordle-grid-char-false {
+  background-color: grey;
+} */
 
 .keyboard-grid {
   display: flex;

@@ -29,7 +29,7 @@ const letters = [
 function App() {
   //data for guesslist 
   const pickWordleAnswer = () => {
-  const randomWord = wordList[Math.floor(Math.random() * wordList.length)]
+  const randomWord = answerList[Math.floor(Math.random() * answerList.length)]
   return randomWord
   }
   const [wordleGuessList,setWordleGuessList] = useState(JSON.parse(JSON.stringify(defaultList))) 
@@ -38,14 +38,9 @@ function App() {
   const [wordleLetterIndex,setWordleLetterIndex] = useState(0)
   const [wordleAnswer,setWordleAnswer] = useState(pickWordleAnswer())
   const [gameState,setGameState] = useState([...gameStateList][0])
-  // console.log(wordleAnswer)
+  // console.log('answer outside func',wordleAnswer)
   
-  //sameple key
-  // const [showTitle,setShowTitle] = useState(true)
-  //  const sampleKey = () => {
-  //     console.log('hi')
-  //     setShowTitle(!showTitle)
-  //   }
+ 
   useEffect(() => {
     window.addEventListener('keyup',handleKeyPress);
     return () => {
@@ -91,13 +86,19 @@ function App() {
     
   }
   const handleEnterKey = () => {
-    // if (wordleLetterIndex !== 5) return; // stop until it gets to the last letter in the row   
-    //check and update
-    checkAndUpdateGameState()
-    // console.log('guess',guess)
-    // setWordleGuessIndex(wordleGuessIndex + 1)
-    // setWordleLetterIndex(0)
+    if (wordleLetterIndex !== 5) return; // stop until it gets to the last letter in the row   
     
+    const newGuessList = JSON.parse(JSON.stringify(wordleGuessList))
+    // console.log(newGuessList[wordleGuessIndex])
+    const guess = newGuessList[wordleGuessIndex].join('').toLowerCase()
+
+    if(checkIsValidGuess(guess)) {
+      checkAndUpdateGameState(guess)
+      setWordleGuessIndex(wordleGuessIndex + 1)
+      setWordleLetterIndex(0)
+    } else {
+      alert('Word Not Found')
+    }
     
     
   }
@@ -110,43 +111,50 @@ function App() {
     setWordleLetterIndex(wordleLetterIndex + 1)
     setWordleGuessList(newGuessList)
   }
-  const checkAndUpdateGameState = () => {
-    if (wordleLetterIndex !== 5) return; //check once you have 5 letters only
-    const newGuessList = JSON.parse(JSON.stringify(wordleGuessList))
-    // console.log(newGuessList[wordleGuessIndex])
-    const guess = newGuessList[wordleGuessIndex].join('')
-    //returns true/false if chars match
-    if (checkIsValidGuess(guess)) {
-      console.log('check was valid')
-      //set gamestate to win
+  const checkAndUpdateGameState = (guess) => {
+    
+    if (guess === wordleAnswer) {
+      //if won
       setGameState([...gameStateList][1])
-    } else {
-      //if no match move on to the next match
-      console.log('wordle index',wordleGuessIndex)
-      if(wordleGuessIndex !== 5) {
-        console.log('keep playing')
-        //change color of letters in guess answer
-        changeColor(guess)
-        //move to the next game
-        setWordleGuessIndex(wordleGuessIndex + 1)
-        setWordleLetterIndex(0)
-      } else {
-        console.log('lost')
-        //game over set gamestate to lost
-        setGameState([...gameStateList][2])
-      }
-      
+      return;
+    }
+    if(wordleGuessIndex === 5) {
+      //if lost(at the end of the guesses)
+      setGameState([...gameStateList][2])
+      //move to the next game
+      return;
     } 
+    setGameState([...gameStateList][0])
+    return 
+      
+    
   }
   const checkIsValidGuess = (guess) => {
-    console.log(guess === wordleAnswer)
-    return guess === wordleAnswer
+    // console.log(wordleAnswer.includes(guess.toLowerCase()))
+    if (!answerList.includes(guess) && !wordList.includes(guess)) {
+      return false
+    }
+    
+    return true
   }
   const changeColor = (guess) => {
     //change classname to true/false  if guess idx and answer index are the same
-    let answerIdx = wordleAnswer.split('')
-    console.log(answerIdx)
+    //wordleguessidx, letteridx
+    let answerSplit = wordleAnswer.split('')
+    guess = guess.toLowerCase().split('')
+    // for(let i = 0 ; i < )
+    console.log('answer',answerSplit)
+    console.log('guess',guess)
   }
+  // const isCorrect = (guess) => {
+  //   let answerSplit = wordleAnswer.split('')
+  //   guess = guess.toLowerCase().split('')
+  //   // console.log('answer',answerSplit)
+  //   // console.log('guess',guess)
+  //   answerSplit.forEach((letter,index) => {
+  //     console.log(letter)
+  //   })
+  // }
   return (
     <div className="App" >
       <header  className='App-header' >
