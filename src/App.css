@@ -63,13 +63,17 @@
   height: 35px;
 }
 
-.wordle-grid-char-true {
+.wordle-grid-char-green {
   background-color: green;
 }
 
-/* .wordle-grid-char-false {
+.wordle-grid-char-grey {
   background-color: grey;
-} */
+}
+
+.wordle-grid-char-yellow {
+  background-color: yellow;
+}
 
 .keyboard-grid {
   display: flex;
